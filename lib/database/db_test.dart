@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/widgets.dart';
 
 import 'package:path/path.dart';
@@ -7,28 +6,31 @@ import 'package:sqflite/sqflite.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
-void main() async {
-  // Avoid errors caused by flutter upgrade.
-  // Importing 'package:flutter/widgets.dart' is required.
-  WidgetsFlutterBinding.ensureInitialized();
-  // Open the database and store the reference.
-  final Future<Database> database = openDatabase(
-    // Set the path to the database. Note: Using the `join` function from the
-    // `path` package is best practice to ensure the path is correctly
-    // constructed for each platform.
-    join(await getDatabasesPath(), 'accounts.db'),
-    // When the database is first created, create a table to store dogs.
-    onCreate: (db, version) {
-      return db.execute(
-        "CREATE TABLE users(id INTEGER PRIMARY KEY, user INTEGER, pwd INTEGER)",
-      );
-    },
-    // Set the version. This executes the onCreate function and provides a
-    // path to perform database upgrades and downgrades.
-    version: 1,
-  );
+class DB{
+  Future<Database> db_init() async {
+    // Avoid errors caused by flutter upgrade.
+    // Importing 'package:flutter/widgets.dart' is required.
+    WidgetsFlutterBinding.ensureInitialized();
+    // Open the database and store the reference.
+    Future<Database> database = openDatabase(
+      // Set the path to the database. Note: Using the `join` function from the
+      // `path` package is best practice to ensure the path is correctly
+      // constructed for each platform.
+      join(await getDatabasesPath(), 'accounts.db'),
+      // When the database is first created, create a table to store dogs.
+      onCreate: (db, version) {
+        return db.execute(
+          "CREATE TABLE users(id INTEGER PRIMARY KEY, user INTEGER, pwd INTEGER)",
+        );
+      },
+      // Set the version. This executes the onCreate function and provides a
+      // path to perform database upgrades and downgrades.
+      version: 1,
+    );
+    return database;
+  }
 
-  Future<void> insertUser(User user) async {
+  Future<void> insertUser(User user, Future<Database> database) async {
     // Get a reference to the database.
     final Database db = await database;
 
@@ -42,7 +44,7 @@ void main() async {
     );
   }
 
-  Future<List<User>> users() async {
+  Future<List<User>> users(Future<Database> database) async {
     // Get a reference to the database.
     final Database db = await database;
 
@@ -59,7 +61,7 @@ void main() async {
     });
   }
 
-  Future<void> updateUser(User user) async {
+  Future<void> updateUser(User user, Future<Database> database) async {
     // Get a reference to the database.
     final db = await database;
 
@@ -74,7 +76,7 @@ void main() async {
     );
   }
 
-  Future<void> deleteUser(int id) async {
+  Future<void> deleteUser(int id, Future<Database> database) async {
     // Get a reference to the database.
     final db = await database;
 
@@ -88,7 +90,7 @@ void main() async {
     );
   }
 
-  void checkMatch(String user, pwd) async{
+  void checkMatch(String user, String pwd, Future<Database> database) async{
     var user_e = utf8.encode(user);
     var pwd_e = utf8.encode(pwd);
     var user_h = sha256.convert(user_e).hashCode;
@@ -105,44 +107,47 @@ void main() async {
       print("Fail");
     }
   }
-  var bytes = utf8.encode("oli"); // data being hashed
-  var digest = sha256.convert(bytes);
-  var ppwd = utf8.encode("156");
-  var pdigest = sha256.convert(ppwd);
 
-  var oli = User(
-  id: 0,
-  user: digest.hashCode,
-  pwd: pdigest.hashCode,
-  );
-  // Insert a dog into the database.
-  await insertUser(oli);
+  void test(Future<Database> database) async {
+    var bytes = utf8.encode("oli"); // data being hashed
+    var digest = sha256.convert(bytes);
+    var ppwd = utf8.encode("156");
+    var pdigest = sha256.convert(ppwd);
 
-  // Print the list of dogs (only Fido for now).
-  print(await users());
-  print(digest.hashCode);
-  print(pdigest.hashCode);
-  // Update Fido's age and save it to the database.
-  checkMatch("oli", "156");
-  checkMatch("addazdazdaz", "27274217");
+    var oli = User(
+      id: 0,
+      user: digest.hashCode,
+      pwd: pdigest.hashCode,
+    );
+    // Insert a dog into the database.
+    await insertUser(oli,database);
+    // Print the list of dogs (only Fido for now).
+    print(await users(database));
+    print(digest.hashCode);
+    print(pdigest.hashCode);
+    // Update Fido's age and save it to the database.
+    checkMatch("oli", "156",database);
+    checkMatch("addazdazdaz", "27274217",database);
+  }
 }
+
 class User {
   final int id;
   final int user;
   final int pwd;
 
-  User({this.id,this.user, this.pwd});
+  User({this.id, this.user, this.pwd});
 
   Map<String, int> toMap() {
     return {
-      'id' : id,
+      'id': id,
       'user': user,
       'pwd': pwd,
     };
   }
 
-  // Implement toString to make it easier to see information about
-  // each dog when using the print statement.
+// Implement toString to make it easier to see information about
+// each dog when using the print statement.
   @override
   String toString() {
     return 'User{id: $id, user: $user, pwd: $pwd}';
