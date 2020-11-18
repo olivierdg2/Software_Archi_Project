@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/signup_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignupScreen extends StatefulWidget {
 
-  static final String id = 'login_screen';
+  static final String id = 'signup__screen';
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _email, _password;
+  String _name,_email, _password;
 
   _submit() {
     if (_formKey.currentState.validate()){
@@ -28,9 +27,9 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Moi przyjaciele krowy',
+              'Cow',
               style: TextStyle(
-                  fontSize: 30.0,
+                  fontSize: 50.0,
                   fontFamily:
                   'OpenSans'
               ),
@@ -47,10 +46,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: TextFormField(
                       decoration: InputDecoration(
-                            labelText: 'Email'
+                          labelText: 'Name'
                       ),
                       validator: (input) => input.trim().isEmpty
-                          ? 'Please enter a valid user'
+                          ? 'Please enter a valid name'
+                          : null,
+                      onSaved: (input) => _name = input,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 30.0,
+                      vertical: 10.0,
+                    ),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          labelText: 'Email'
+                      ),
+                      validator: (input) => !input.contains('@')
+                          ? 'Please enter a valid email'
                           : null,
                       onSaved: (input) => _email = input,
                     ),
@@ -80,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: _submit,
                       color: Colors.blue,
                       child: Text(
-                        'Login',
+                        'Sign Up',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
@@ -91,10 +105,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     width: 250.0,
                     child: FlatButton(
-                      onPressed: () => Navigator.pushNamed(context, SignupScreen.id),
+                      onPressed: () => Navigator.pop(context),
                       color: Colors.blue,
                       child: Text(
-                        'Sign up',
+                        'Back to Login',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
