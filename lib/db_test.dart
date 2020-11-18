@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:flutter/widgets.dart';
 
 import 'package:path/path.dart';
@@ -36,7 +36,7 @@ void main() async {
     // `conflictAlgorithm`. In this case, if the same dog is inserted
     // multiple times, it replaces the previous data.
     await db.insert(
-      'user',
+      'users',
       user.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -47,7 +47,7 @@ void main() async {
     final Database db = await database;
 
     // Query the table for all The Dogs.
-    final List<Map<String, dynamic>> maps = await db.query('users');
+    final List<Map> maps = await db.query('users');
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -88,34 +88,43 @@ void main() async {
     );
   }
 
-  var oli = User(
-    id: 0,
-    user: 4,
-    pwd: 35,
-  );
+  void checkMatch(String user, pwd) async{
+    var user_e = utf8.encode(user);
+    var pwd_e = utf8.encode(pwd);
+    var user_h = sha256.convert(user_e).hashCode;
+    var pwd_h = sha256.convert(pwd_e).hashCode;
+    // Get a reference to the database.
+    final db = await database;
+    // Remove the Dog from the database.
+    List<Map> result = await db.rawQuery('SELECT id FROM users WHERE user = $user_h AND pwd = $pwd_h');
 
+    if(result.isNotEmpty){
+      print(result);
+    }
+    else{
+      print("Fail");
+    }
+  }
+  var bytes = utf8.encode("oli"); // data being hashed
+  var digest = sha256.convert(bytes);
+  var ppwd = utf8.encode("156");
+  var pdigest = sha256.convert(ppwd);
+
+  var oli = User(
+  id: 0,
+  user: digest.hashCode,
+  pwd: pdigest.hashCode,
+  );
   // Insert a dog into the database.
   await insertUser(oli);
 
   // Print the list of dogs (only Fido for now).
   print(await users());
-
+  print(digest.hashCode);
+  print(pdigest.hashCode);
   // Update Fido's age and save it to the database.
-  oli = User(
-    id: oli.id,
-    user: oli.user,
-    pwd: oli.pwd + 7,
-  );
-  await updateUser(oli);
-
-  // Print Fido's updated information.
-  print(await users());
-
-  // Delete Fido from the database.
-  await deleteUser(oli.id);
-
-  // Print the list of dogs (empty).
-  print(await users());
+  checkMatch("oli", "156");
+  checkMatch("addazdazdaz", "27274217");
 }
 class User {
   final int id;
@@ -124,7 +133,7 @@ class User {
 
   User({this.id,this.user, this.pwd});
 
-  Map<String, dynamic> toMap() {
+  Map<String, int> toMap() {
     return {
       'id' : id,
       'user': user,
