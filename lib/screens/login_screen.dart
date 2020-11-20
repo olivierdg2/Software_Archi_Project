@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/signup_screen.dart';
 import 'package:flutter_app/database/db_test.dart';
+import 'package:sqflite/sqflite.dart';
 
 class LoginScreen extends StatefulWidget {
 
@@ -22,6 +23,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    DB a = new DB();
+    Future<Database> database = a.db_init();
+    a.test(database);
     return Scaffold(
       body: Center(
         child: Column(
