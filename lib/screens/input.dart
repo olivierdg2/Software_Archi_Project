@@ -1,31 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/signup_screen.dart';
 import 'package:flutter_app/database/db_test.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter/services.dart';
 
-class LoginScreen extends StatefulWidget {
+class InputScreen extends StatefulWidget {
 
-  static final String id = 'login_screen';
+  static final String id = 'input_screen';
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _InputScreenState createState() => _InputScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _InputScreenState extends State<InputScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _email, _password;
+  int _id;
+  String _description;
 
-  _submit() {
+  _add(int id, String description,DB db,Future<Database> database) async{
     if (_formKey.currentState.validate()){
       _formKey.currentState.save();
+      var cow = Cow(
+        id: id,
+        description: _description,
+      );
+      db.insertCow(cow,database);
+      print(await db.cows(database));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    DB a = new DB();
-    Future<Database> database = a.db_init();
-    a.testCow(database);
+    DB db = new DB();
+    Future<Database> database = db.db_init();
     return Scaffold(
       body: Center(
         child: Column(
@@ -51,13 +57,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       vertical: 10.0,
                     ),
                     child: TextFormField(
+                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
                       decoration: InputDecoration(
-                            labelText: 'Email'
+                          labelText: 'Cow Id'
                       ),
-                      validator: (input) => input.trim().isEmpty
-                          ? 'Please enter a valid user'
-                          : null,
-                      onSaved: (input) => _email = input,
+                      onSaved: (input) => _id = int.parse(input),
                     ),
                   ),
                   Padding(
@@ -66,14 +70,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       vertical: 10.0,
                     ),
                     child: TextFormField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
                       decoration: InputDecoration(
-                          labelText: 'Password'
+                          labelText: 'Description'
                       ),
-                      validator: (input) => input.length < 6
-                          ? 'Password must be at least 6 characters long'
-                          : null,
-                      onSaved: (input) => _password = input,
-                      obscureText: true,
+                      onSaved: (input) => _description = input,
                     ),
                   ),
                   SizedBox(
@@ -82,24 +84,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     width: 250.0,
                     child: FlatButton(
-                      onPressed: _submit,
+                      onPressed: () => _add(_id,_description,db,database),
                       color: Colors.blue,
                       child: Text(
-                        'Login',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 250.0,
-                    child: FlatButton(
-                      onPressed: () => Navigator.pushNamed(context, SignupScreen.id),
-                      color: Colors.blue,
-                      child: Text(
-                        'Sign up',
+                        'Add cow',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
