@@ -32,14 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Moi przyjaciele krowy',
-              style: TextStyle(
-                  fontSize: 30.0,
-                  fontFamily:
-                  'OpenSans'
-              ),
-            ),
             Form(
               key: _formKey,
               child: Column(

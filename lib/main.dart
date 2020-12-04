@@ -35,9 +35,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
+    HomeScreen(),
     InputScreen(),
     LoginScreen(),
-    HomeScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -50,7 +50,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BottomNavigationBar Sample'),
+        centerTitle: true,
+        //Moi przyjaciele krowy
+        title: const Text('My Cow\'orkers'),
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -62,12 +64,12 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
+            icon: Icon(Icons.add_sharp),
+            label: 'Add Cow',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
+            icon: Icon(Icons.sync),
+            label: 'Synchronize',
           ),
         ],
         currentIndex: _selectedIndex,
