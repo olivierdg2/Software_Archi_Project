@@ -51,8 +51,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        //Moi przyjaciele krowy
-        title: const Text('My Cow\'orkers'),
+        //Moi przyjaciele krowyMy Cow\'orkers
+        title: const Text('Moi przyjaciele krowy'),
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),

@@ -1,102 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:flutter_app/database/db_test.dart';
+import 'package:sqflite/sqflite.dart';
 
+DB db = new DB();
+Future<Database> database = db.db_init();
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+
   static final String id = 'home__screen';
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Cow list',
-        home: RandomWords());
-  }
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class RandomWords extends StatefulWidget {
-  @override
-  _RandomWordsState createState() => _RandomWordsState();
-}
-
-class _RandomWordsState extends State<RandomWords> {
+class _HomeScreenState extends State<HomeScreen> {
   final _suggestions = <WordPair>[];
   final _saved = Set<WordPair>();
   final _biggerFont = TextStyle(fontSize: 18.0);
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Cow list'),
-        actions: [
-          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved)
-        ],
-      ),
-      body: _buildSuggestions(),
+      body: _buildCowListView(),
     );
   }
-  Widget _buildSuggestions() {
-    return ListView.builder(
-        padding: EdgeInsets.all(16.0),
-        itemBuilder: /*1*/ (context, i) {
-          if (i.isOdd) return Divider(); /*2*/
 
-          final index = i ~/ 2; /*3*/
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10)); /*4*/
-          }
-          return _buildRow(_suggestions[index]);
-        });
-  }
-  Widget _buildRow(WordPair pair) {
-    final alreadySaved = _saved.contains(pair);
-    return ListTile(
-      title: Text(
-        pair.asPascalCase,
-        style: _biggerFont,
-      ),
-      trailing: Icon(
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
-      ),
-      onTap: () {      // NEW lines from here...
-        setState(() {
-          if (alreadySaved) {
-            _saved.remove(pair);
+  _buildCowListView(){
+    return FutureBuilder(
+        future: db.cows(database),
+        builder: (BuildContext context, AsyncSnapshot snapshot){
+          if (!snapshot.hasData){
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           } else {
-            _saved.add(pair);
-          }
-        });
-      },               // ... to here.
-    );
-  }
-  void _pushSaved() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        // NEW lines from here...
-        builder: (BuildContext context) {
-          final tiles = _saved.map(
-                (WordPair pair) {
-              return ListTile(
-                title: Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
+            return ListView.separated(
+                separatorBuilder: (context, index) => Divider(
+                  color: Colors.black12,
                 ),
-              );
-            },
-          );
-          final divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles,
-          ).toList();
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Saved Suggestions'),
-            ),
-            body: ListView(children: divided),
-          );
-        }, // ...to here.
-      ),
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index){
+                  return ListTile(
+                    leading: Text(
+                      "${index + 1}",
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    title: Text(
+                      "Id: ${snapshot.data[index].id}"
+                    ),
+                    subtitle: Text(
+                        "Description: ${snapshot.data[index].description}"
+                    ),
+                  );
+                },
+            );
+          }
+        }
     );
   }
 }

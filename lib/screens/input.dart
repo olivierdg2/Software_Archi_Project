@@ -24,7 +24,7 @@ class _InputScreenState extends State<InputScreen> {
         description: _description,
       );
       db.insertCow(cow,database);
-      print(await db.cows(database));
+      print(db.cows(database));
     }
   }
 

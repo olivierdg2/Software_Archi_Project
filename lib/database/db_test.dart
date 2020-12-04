@@ -223,10 +223,13 @@ class User {
   }
 }
 class Cow {
-  final int id;
-  final String description;
+  int id;
+  String description;
 
-  Cow({this.id, this.description});
+  Cow({
+    this.id,
+    this.description
+  });
 
   Map<String,dynamic> toMap() {
     return {
