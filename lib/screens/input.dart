@@ -54,6 +54,9 @@ class _InputScreenState extends State<InputScreen> {
                       decoration: InputDecoration(
                           labelText: 'Cow Id'
                       ),
+                      validator: (input) => input.trim().isEmpty
+                          ? 'Please enter a valid Cow id'
+                          : null,
                       onSaved: (input) => _id = int.parse(input),
                     ),
                   ),

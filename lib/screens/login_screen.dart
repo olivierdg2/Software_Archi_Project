@@ -4,10 +4,10 @@ import 'package:flutter_app/database/online.dart';
 import 'package:flutter_app/database/local.dart';
 import 'globals.dart' as globals;
 import 'package:sqflite/sqflite.dart';
-bool log = globals.isLoggedIn;
-int id = globals.log_id;
+
 Future<Database> online = globals.online;
 Future<Database> local = globals.local;
+
 class LoginScreen extends StatefulWidget {
 
   static final String id = 'login_screen';
@@ -20,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   String _email, _password;
 
+  bool log = globals.isLoggedIn;
+  int id = globals.log_id;
 
   _submit() async {
     if (_formKey.currentState.validate()){
@@ -27,34 +29,38 @@ class _LoginScreenState extends State<LoginScreen> {
       List<int> a = await Online.checkMatch(_email, _password, online);
       Local.testCow(local);
       Online.test(online);
+
+      print("---");
+      print(await Online.cows(1, online));
+
+      print("---");
       if (a[0] == 1){
         globals.log_id = a[1];
         globals.isLoggedIn = true;
+        setState(() {log = true; id = a[1];});
       }
       else if (a[0] == 0){
-
+        //Wrong login
       }
       else {
 
       }
     }
-    print(globals.log_id.toString());
-    print(globals.isLoggedIn);
-    setState(() {});
-    print("*****************");
-    print(globals.log_id.toString());
-    print(globals.isLoggedIn);
   }
   _pull() async{
-
+    await Online.pullCows(id,local, online);
+    print(await Local.cows(local));
+    print(await Online.cows(id, online));
   }
   _push() async{
-
+    await Local.pushCows(id,local, online);
+    print(await Online.cows(id, online));
   }
-  _logout(){
+  _logout() async{
     globals.isLoggedIn = false;
     globals.log_id = null;
-    setState(() {});
+    setState(() {log = false; id = null;});
+    print(await Online.cows(1, online));
   }
 
   @override
@@ -83,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Container(
                 width: 250.0,
                 child: FlatButton(
-                  onPressed: _pull,
+                  onPressed: _push,
                   color: Colors.blue,
                   child: Text(
                     'Push',

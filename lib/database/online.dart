@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
-
+import 'package:flutter_app/database/local.dart';
 class Online{
   static Future<Database> db = db_init();
   static Future<Database> db_init() async {
@@ -116,6 +116,79 @@ class Online{
 */  Future<List<User>> a = users(database);
     a.then((value) => print(value));
     print(await db.rawQuery('SELECT * FROM sqlite_master ORDER BY name;'));
+  }
+
+  static Future<List<Cow>> cows(int user_id,Future<Database> database) async {
+    // Get a reference to the database.
+    final Database db = await database;
+
+    // Query the table for all The Dogs.
+    final List<Map> maps = await db.query('cows_' + user_id.toString());
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return Cow(
+        id: maps[i]['id'],
+        description: maps[i]['description'],
+      );
+    });
+  }
+
+  static Future<void> updateCow(Cow cow, Future<Database> database) async {
+    // Get a reference to the database.
+    final db = await database;
+
+    // Update the given Dog.
+    await db.update(
+      'cows',
+      cow.toMap(),
+      // Ensure that the Dog has a matching id.
+      where: "id = ?",
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [cow.id],
+    );
+  }
+
+  static Future<void> deleteCow(int id, Future<Database> database) async {
+    // Get a reference to the database.
+    final db = await database;
+
+    // Remove the Dog from the database.
+    await db.delete(
+      'cows',
+      // Use a `where` clause to delete a specific dog.
+      where: "id = ?",
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [id],
+    );
+  }
+  static void testCow(Future<Database> database) async {
+    final Database db = await database;
+    print(await db.rawQuery('SELECT * FROM sqlite_master ORDER BY name;'));
+  }
+
+  static Future<void> pullCows(int user_id, Future<Database> local, Future<Database> online) async {
+    // Get a reference to the database.
+    final Database loc = await local;
+    final Database on = await online;
+    Future<List<Cow>> cows_online = cows(user_id,online);
+    cows_online.then((value) => transferCows(value,loc));
+
+  }
+  static Future<void> transferCows(List<Cow> l,Database db) async {
+    await db.rawDelete("DELETE FROM cows");
+    for(var i = 0; i < l.length; i++){
+      copyCows(l[i], db);
+    }
+  }
+  static Future<void> copyCows(Cow cow,database) async {
+    // Get a reference to the database.
+    final Database db = await database;
+    await db.insert(
+      'cows',
+      cow.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 }
 

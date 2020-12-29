@@ -28,7 +28,7 @@ class Local{
     return database;
   }
 
-  static Future<void> insertCow(Cow cow, Future<Database> database) async {
+  static Future<void> insertCow(Cow cow,database) async {
     // Get a reference to the database.
     final Database db = await database;
 
@@ -41,7 +41,7 @@ class Local{
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-  static Future<List<Cow>> cows(Future<Database> database) async {
+  static Future<List<Cow>> cows(database) async {
     // Get a reference to the database.
     final Database db = await database;
 
@@ -85,10 +85,36 @@ class Local{
       whereArgs: [id],
     );
   }
-  static void testCow(Future<Database> database) async {
+  static void testCow(database) async {
     final Database db = await database;
     print(await cows(database));
     print(await db.rawQuery('SELECT * FROM sqlite_master ORDER BY name;'));
+  }
+  static Future<void> pushCows(int user_id, Future<Database> local, Future<Database> online) async {
+    // Get a reference to the database.
+    final Database loc = await local;
+    final Database on = await online;
+    Future<List<Cow>> cows_local = cows(loc);
+    cows_local.then((value) => transferCows(user_id,value,on));
+
+  }
+  static Future<void> transferCows(int user_id,List<Cow> l,Database db) async {
+    for(var i = 0; i < l.length; i++){
+      copyCows(user_id,l[i], db);
+    }
+  }
+  static Future<void> copyCows(int user_id,Cow cow,database) async {
+    // Get a reference to the database.
+    final Database db = await database;
+
+    // Insert the Dog into the correct table. Also specify the
+    // `conflictAlgorithm`. In this case, if the same dog is inserted
+    // multiple times, it replaces the previous data.
+    await db.insert(
+      'cows_' + user_id.toString(),
+      cow.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 }
 
