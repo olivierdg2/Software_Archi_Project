@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'globals.dart' as globals;
+import 'package:flutter_app/database/online.dart';
+import 'package:sqflite/sqflite.dart';
+Future<Database> online = globals.online;
 
 class SignupScreen extends StatefulWidget {
 
@@ -10,11 +14,12 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _name,_email, _password;
+  String _email, _password;
 
-  _submit() {
+  _add_user(String email, String pwd) async{
     if (_formKey.currentState.validate()){
       _formKey.currentState.save();
+      Online.insertUser(email,pwd,online);
     }
   }
 
@@ -39,21 +44,6 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 30.0,
-                      vertical: 10.0,
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Name'
-                      ),
-                      validator: (input) => input.trim().isEmpty
-                          ? 'Please enter a valid name'
-                          : null,
-                      onSaved: (input) => _name = input,
-                    ),
-                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 30.0,
@@ -91,7 +81,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   Container(
                     width: 250.0,
                     child: FlatButton(
-                      onPressed: _submit,
+                      onPressed: () => _add_user(_email,_password),
                       color: Colors.blue,
                       child: Text(
                         'Sign Up',

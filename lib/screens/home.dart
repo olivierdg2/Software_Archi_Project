@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
-import 'package:flutter_app/database/db_test.dart';
+import 'globals.dart' as globals;
+import 'package:flutter_app/database/local.dart';
 import 'package:sqflite/sqflite.dart';
-
-DB db = new DB();
-Future<Database> database = db.db_init();
+Future<Database> local = globals.local;
 
 class HomeScreen extends StatefulWidget {
 
@@ -27,8 +26,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _buildCowListView(){
+    //Check that we log out when quitting the app
+    print(globals.log_id);
+    print(globals.isLoggedIn);
     return FutureBuilder(
-        future: db.cows(database),
+        future: Local.cows(local),
         builder: (BuildContext context, AsyncSnapshot snapshot){
           if (!snapshot.hasData){
             return Center(

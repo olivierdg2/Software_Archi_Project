@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/database/db_test.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/database/local.dart';
+import 'globals.dart' as globals;
+import 'package:sqflite/sqflite.dart';
+Future<Database> local = globals.local;
 
 class InputScreen extends StatefulWidget {
 
@@ -16,29 +18,27 @@ class _InputScreenState extends State<InputScreen> {
   int _id;
   String _description;
 
-  _add(int id, String description,DB db,Future<Database> database) async{
+  _add_cow(int id, String description) async{
     if (_formKey.currentState.validate()){
       _formKey.currentState.save();
       var cow = Cow(
         id: id,
         description: _description,
       );
-      db.insertCow(cow,database);
-      print(db.cows(database));
+      Local.insertCow(cow,local);
+      print(Local.cows(local));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    DB db = new DB();
-    Future<Database> database = db.db_init();
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset("assets/images/cow.png"),
+            Expanded(child: Image.asset("assets/images/cow.png")),
             Form(
               key: _formKey,
               child: Column(
@@ -77,7 +77,7 @@ class _InputScreenState extends State<InputScreen> {
                   Container(
                     width: 250.0,
                     child: FlatButton(
-                      onPressed: () => _add(_id,_description,db,database),
+                      onPressed: () => _add_cow(_id,_description),
                       color: Colors.blue,
                       child: Text(
                         'Add cow',
