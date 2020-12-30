@@ -3,7 +3,7 @@ import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/input.dart';
 import 'package:flutter_app/screens/login_screen.dart';
 import 'package:flutter_app/screens/signup_screen.dart';
-
+import 'globals.dart' as globals;
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -47,11 +47,23 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
+    bool log = globals.isLoggedIn;
+    var connect_icon = Icon(Icons.search);
+    if (log){
+      connect_icon = Icon(Icons.search);
+    }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         //Moi przyjaciele krowyMy Cow\'orkers
         title: const Text('Moi przyjaciele krowy'),
+        actions: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: connect_icon,
+          ),
+        ]
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),

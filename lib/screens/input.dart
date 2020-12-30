@@ -23,7 +23,7 @@ class _InputScreenState extends State<InputScreen> {
       _formKey.currentState.save();
       var cow = Cow(
         id: id,
-        description: _description,
+        description: description,
       );
       Local.insertCow(cow,local);
       print(Local.cows(local));

@@ -14,9 +14,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _suggestions = <WordPair>[];
-  final _saved = Set<WordPair>();
-  final _biggerFont = TextStyle(fontSize: 18.0);
+
+  _delete(id){
+    Local.deleteCow(id, local);
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -54,6 +56,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     subtitle: Text(
                         "Description: ${snapshot.data[index].description}"
                     ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => _delete(snapshot.data[index].id)
+                    )
                   );
                 },
             );
