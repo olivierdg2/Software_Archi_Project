@@ -1,7 +1,9 @@
+//Screen where the user can sign up
 import 'package:flutter/material.dart';
 import 'globals.dart' as globals;
 import 'package:flutter_app/database/online.dart';
 import 'package:sqflite/sqflite.dart';
+//Get online connection
 Future<Database> online = globals.online;
 
 class SignupScreen extends StatefulWidget {
@@ -13,9 +15,11 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  //User information form
   final _formKey = GlobalKey<FormState>();
   String _email, _password;
 
+  //Add a User from its email and pwd in the selected online db
   _add_user(String email, String pwd) async{
     if (_formKey.currentState.validate()){
       _formKey.currentState.save();
@@ -32,7 +36,7 @@ class _SignupScreenState extends State<SignupScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Cow',
+              'Information',
               style: TextStyle(
                   fontSize: 50.0,
                   fontFamily:

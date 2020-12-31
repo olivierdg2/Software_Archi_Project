@@ -3,7 +3,7 @@ import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/input.dart';
 import 'package:flutter_app/screens/login_screen.dart';
 import 'package:flutter_app/screens/signup_screen.dart';
-import 'globals.dart' as globals;
+import 'package:flutter_app/screens/globals.dart' as  globals;
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -30,28 +30,44 @@ class MyStatefulWidget extends StatefulWidget {
   _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
 }
 
-/// This is the private State class that goes with MyStatefulWidget.
+//Contains the corps of the applications -> Nav bar + app bar
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
+  //Screen options of the nav bar
   static List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     InputScreen(),
     LoginScreen(),
   ];
-
+  //On nav bar tapped select index of selected screen
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  //Build the corps
   @override
   Widget build(BuildContext context) {
+    //Chose which icon to display according to isLoggedIn
     bool log = globals.isLoggedIn;
-    var connect_icon = Icon(Icons.search);
+    var connect_icon = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Icon(Icons.cloud_off_outlined),
+        Text("Offline")
+      ],
+    );
     if (log){
-      connect_icon = Icon(Icons.search);
+      connect_icon = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(Icons.cloud_rounded),
+          Text("Online")
+        ],
+      );
     }
+
 
     return Scaffold(
       appBar: AppBar(
@@ -60,7 +76,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         title: const Text('Moi przyjaciele krowy'),
         actions: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 40),
             child: connect_icon,
           ),
         ]

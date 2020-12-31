@@ -1,8 +1,11 @@
+//Screen where the user can add a cow to its local db
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/database/local.dart';
 import 'globals.dart' as globals;
 import 'package:sqflite/sqflite.dart';
+
+//get local connection from globals
 Future<Database> local = globals.local;
 
 class InputScreen extends StatefulWidget {
@@ -14,11 +17,14 @@ class InputScreen extends StatefulWidget {
 }
 
 class _InputScreenState extends State<InputScreen> {
+  //Cow information form
   final _formKey = GlobalKey<FormState>();
   int _id;
   String _description;
 
+  //Add cow from its information to local db
   _add_cow(int id, String description) async{
+    //Cow information form
     if (_formKey.currentState.validate()){
       _formKey.currentState.save();
       var cow = Cow(
@@ -26,6 +32,7 @@ class _InputScreenState extends State<InputScreen> {
         description: description,
       );
       Local.insertCow(cow,local);
+      //debugging
       print(Local.cows(local));
     }
   }
