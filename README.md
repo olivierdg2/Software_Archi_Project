@@ -18,4 +18,4 @@ Once you've installed android studio and downloaded the repo run the project and
 
 ### Home (Cow list)
 
-![alt text](https://github.com/olivierdg2/Software_Archi_Project/edit/master/README_images/home.png?raw=true)
+![alt text](https://github.com/olivierdg2/Software_Archi_Project/blob/master/README_images/home.png?raw=true)
