@@ -22,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
   String _email, _password;
   bool log = globals.isLoggedIn;
   int id = globals.log_id;
-
   //Check information if it matches an account then log in if so
   _submit() async {
     if (_formKey.currentState.validate()){
@@ -30,11 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
       //Check match of information
       List<int> a = await Online.checkMatch(_email, _password, online);
       //Debugging
-      Local.testCow(local);
       Online.test(online);
-      print("---");
-      print(await Online.cows(1, online));
-      print("---");
       //Log in
       if (a[0] == 1){
         globals.log_id = a[1];
@@ -59,6 +54,8 @@ class _LoginScreenState extends State<LoginScreen> {
   //Pussh cows from Local to Online db
   _push() async{
     await Local.pushCows(id,local, online);
+    //debugging
+    print(await Local.cows(local));
     print(await Online.cows(id, online));
   }
   //Disconnect
@@ -66,7 +63,6 @@ class _LoginScreenState extends State<LoginScreen> {
     globals.isLoggedIn = false;
     globals.log_id = null;
     setState(() {log = false; id = null;});
-    print(await Online.cows(1, online));
   }
 
   @override

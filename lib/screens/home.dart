@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //Check that we log out when quitting the app
     print(globals.log_id);
     print(globals.isLoggedIn);
+    Local.testCow(local);
     return FutureBuilder(
         future: Local.cows(local),
         builder: (BuildContext context, AsyncSnapshot snapshot){

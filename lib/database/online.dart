@@ -47,7 +47,7 @@ class Online{
     }
     );
     //Get the id of the inserted user
-    List<Map> id = await db.rawQuery("SELECT id FROM users WHERE email = '$email' AND pwd = $pwd_h") ;
+    List<Map> id = await db.rawQuery("SELECT id FROM users WHERE email = '$email' AND pwd = $pwd_h");
     //Create a cows_id table to store cows related to this user
     db.execute("CREATE TABLE cows_" + id[0]["id"].toString() + "(id INTEGER PRIMARY KEY, description TEXT)");
   }
@@ -83,8 +83,11 @@ class Online{
     );
     //Remove related cows_id table
     await db.execute(
-      "DROP TABLE _cows" + id.toString(),
+      "DROP TABLE cows_" + id.toString(),
     );
+    //For debugging
+    print(await users(database));
+    print(await db.rawQuery('SELECT * FROM sqlite_master ORDER BY name;'));
   }
 
   //Check if there is a match in the selected database for an email/pwd pair
@@ -115,25 +118,27 @@ class Online{
 
     // Get a reference to the database.
     final Database db = await database;
-    /*
-    var ppwd = utf8.encode("156");
-    var pdigest = sha256.convert(ppwd);
 
-    // Insert a dog into the database.
-    await insertUser("oli","156",database);
-    // Print the list of dogs (only Fido for now).
+
+    print("database before add");
     print(await users(database));
-    print(pdigest.hashCode);
-    // Update Fido's age and save it to the database.
-    checkMatch("oli", "156",database);
-    checkMatch("addazdazdaz", "27274217",database);
-    */
-
-    //print all Users
-    Future<List<User>> a = users(database);
-    a.then((value) => print(value));
-    //print all sqlite information
-    print(await db.rawQuery('SELECT * FROM sqlite_master ORDER BY name;'));
+    print("database after add");
+    // Insert User into the database.
+    var pwd_e = utf8.encode("156");
+    var pwd_h = sha256.convert(pwd_e).hashCode;
+    await insertUser("oli","156",database);
+    print(await users(database));
+    // Check match of pairs
+    print("check for an inserted value");
+    print(await checkMatch("oli", "156",database));
+    print("check for a not inserted value");
+    print(await checkMatch("addazdazdaz", "27274217",database));
+    // Delete the inserted User.
+    Future<List<Map>> id = db.rawQuery("SELECT id FROM users WHERE email = 'oli' AND pwd = $pwd_h");
+    id.then((value) => {
+      print("database after delete"),
+      deleteUser(value[0]["id"], database)
+    });
   }
 
   //Return all Cows from a specific cows_id
