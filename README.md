@@ -1,4 +1,4 @@
-# flutter_app
+# Moi przyjaciele krowy (my friends the cowsf) a flutter_app
 
 A new Flutter application.
 
