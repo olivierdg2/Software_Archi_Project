@@ -4,7 +4,7 @@ A new Flutter application.
 
 ## Context
 
-This project is realized as part of the course of Architecture and software quality.
+This project is realized as part of the course of Architecture and software quality at the ECAM.
 
 This application aims to list cows in a way of having a local database that you can synchronize with an online one.
 
@@ -56,3 +56,14 @@ You can also log out from your account.
 
 ![alt text](https://github.com/olivierdg2/Software_Archi_Project/blob/master/README_images/Synchronize_logged.png?raw=true)
 
+## State of the project and future features/upgrades
+
+At this point the online database is implemented as another local database, thus the first upgrade will be to change it to an online one. 
+
+Some bugs are still present on the add cow function, therefore this function needs to be fixed in order to have a well functional application.
+
+The push function can be very dangerous since it overwrites the online database which should be the most persistent one. Therefore some verifications should be added before the operation.
+
+The connection status is only updated on the log in and the log out functions, therefore a needed upgrade would be to update it every time the conection to internet is changed. 
+
+A possible new feature would be to add a button on each cow (such as the delete button) to open an area related to the selected cow.
